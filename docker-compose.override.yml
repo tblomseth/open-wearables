@@ -1,0 +1,33 @@
+# Single-host proof-of-concept deploy. See poc/README.md.
+# Docker Compose merges this file into docker-compose.yml automatically.
+# - Every service restarts after a Docker or host restart.
+# - Every published port binds to loopback only. Reach the API and the frontend through an SSH tunnel.
+services:
+  db:
+    restart: unless-stopped
+    ports: !override
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
+  app:
+    restart: unless-stopped
+    ports: !override
+      - "127.0.0.1:${API_PORT:-8000}:8000"
+  celery-worker:
+    restart: unless-stopped
+  celery-beat:
+    restart: unless-stopped
+  flower:
+    restart: unless-stopped
+    ports: !override
+      - "127.0.0.1:${FLOWER_PORT:-5555}:5555"
+  redis:
+    restart: unless-stopped
+    ports: !override
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+  svix-server:
+    restart: unless-stopped
+    ports: !override
+      - "127.0.0.1:${SVIX_PORT:-8071}:8071"
+  frontend:
+    restart: unless-stopped
+    ports: !override
+      - "127.0.0.1:${FRONTEND_PORT:-3000}:3000"
